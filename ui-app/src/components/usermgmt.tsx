@@ -35,6 +35,9 @@ const UserManagement = () => {
   const [searchEmail, setSearchEmail] = useState<EmailResponse[]>([]);
   const [showEmail, setShowEmail] = useState<boolean>(false);
 
+  // Needs to be async otherwise the user wouldn't be able to see updates
+  // If we used fetch we'd have to do a lot of error processing on our side
+  // axios does it for us
   const getAllUsernames = async () => {
     try {
       const response = await axios.get<UsernameResponse[]>('http://localhost:8000/read/usernames');
