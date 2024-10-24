@@ -11,6 +11,8 @@ interface User {
   email: string;
 }
 
+// An express request customized to our own needs
+// Defining the type
 interface UserRequest extends Request {
   users?: User[];
 }
@@ -28,9 +30,12 @@ fs.readFile(path.resolve(__dirname, dataFile), (err, data) => {
   users = JSON.parse(data.toString());
 });
 
+// Kinda like middleware
+// The order in which we define endpoints matters
 const addMsgToRequest = (req: UserRequest, res: Response, next: NextFunction) => {
   if (users) {
     req.users = users;
+    // in Read usernames, the next function is GET read usernames endpoint
     next();
   } else {
     return res.json({
@@ -39,6 +44,8 @@ const addMsgToRequest = (req: UserRequest, res: Response, next: NextFunction) =>
   }
 };
 
+// Have to check cors on every incoming requests
+// This is triggered to check each incoming request after this
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use('/read/usernames', addMsgToRequest);
 
@@ -47,6 +54,23 @@ app.get('/read/usernames', (req: UserRequest, res: Response) => {
     return { id: user.id, username: user.username };
   });
   res.send(usernames);
+});
+
+// New endpoint for lab
+app.use('/read/username', addMsgToRequest);
+app.get('/read/username/:name', (req: UserRequest, res: Response) => {
+  let name = req.params.name;
+  let users_with_name = req.users?.filter(function(user) {
+    return user.username === name;
+  });
+
+  if(users_with_name?.length === 0) {
+    res.send({
+      error: {message: `${name} not found`, status: 404}
+    });
+  } else {
+    res.send(users_with_name);
+  }
 });
 
 app.use(express.json());
@@ -66,3 +90,5 @@ app.post('/write/adduser', (req: UserRequest, res: Response) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+

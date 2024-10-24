@@ -6,6 +6,10 @@
 
 To run any server use `node /path/to/server` from the project root.
 
+Updated:
+`npm install -D ts-node`
+`npx ts-node {path_to_server}/server.ts`
+
 ## For You to Do
 
 1. Add a route to quiz/server.js to search for a user.

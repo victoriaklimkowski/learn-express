@@ -92,6 +92,10 @@ app.post('/write/adduser', (req: UserRequest, res: Response) => {
   fs.writeFile(path.resolve(__dirname, dataFile), JSON.stringify(users), (err) => {
     // What if this fails though? We should use a design pattern to address this issue
     // when we come back to it. 
+    // To better handle this, we can use Node's built in pub/sub system to trigger an event
+    // to call a backup of the user, so we don't lose the data, then merge them later. 
+    // So from here, trigger an event, which will be listeened to by some subscriber
+    // Which will trigger the backup (see backup.ts)
     if (err) console.log('Failed to write');
     else console.log('User Saved');
   });

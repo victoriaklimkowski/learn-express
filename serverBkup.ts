@@ -62,7 +62,12 @@ app.post('/write/adduser', (req: UserRequest, res: Response) => {
    * Synchronous call to compute the size of the data file
    */
   const dataFileSize = fs.statSync(path.resolve(__dirname, dataFile)).size;
+  // Create an artificial fail by limiting to 10 bytes to test the backup
   if(dataFileSize > 1024) {
+    // IF fail triggered, called bakupEmmitter in bkupEmitter.ts
+    // Pass the parameters: user information and the path to the backup file
+    // event emmiter is a type of eventbus
+    // see this in bkup.json - a new json file created after use (in class)
     bkupEmitter.emit('bkup', users, path.resolve(__dirname, bkupFile)); // emit bkup event when the file size is over 10 Kb
   }
   else {
